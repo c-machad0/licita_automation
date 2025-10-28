@@ -1,5 +1,6 @@
 import time
 
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
@@ -12,9 +13,9 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 from config import URLS, LOGIN, DEFAULT_DIRECTORY
 
+
 class Automation:
     def __init__(self):
-        pass
         self.default_dir = DEFAULT_DIRECTORY
         self.options = Options()
         self.service = ChromeService(ChromeDriverManager().install())
@@ -96,6 +97,7 @@ class Automation:
 
         except Exception as e:
             print(f'{e}: Erro ao encontrar o seletor')
+
 
     # /sai/licitacaocontrato/index
     def nova_licitacao(self):
