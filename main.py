@@ -30,6 +30,7 @@ class Automation:
         self.home()
         self.publicacao_legal()
         self.indexedicao()
+        self.nova_licitacao()
         self.quit_app()
 
 
@@ -100,9 +101,8 @@ class Automation:
     # /sai/licitacaocontrato/index
     def nova_licitacao(self):
         try:
-            button_nova_licitacao = self.driver.find_elements(By.CSS_SELECTOR, '#main > div > div > article > div > div.row > div:nth-child(1) > a')
-            button_xpath = button_nova_licitacao.find_element(By.XPATH, '//*[@id="main"]/div/div/article/div/div[1]/div[1]/a')
-            button_xpath.click()
+            botao = self.driver.find_element(By.LINK_TEXT, 'Nova licitação / contratação (Lei 14.133/21)')
+            botao.click()
 
             print('"Nova Licitação" clicado')
 
