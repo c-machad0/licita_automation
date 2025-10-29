@@ -62,17 +62,15 @@ class Automation:
                 EC.element_to_be_clickable((By.XPATH, "//div[@id='close']/a"))
             )
 
-            if close_button:
-                close_button.click()
+            close_button.click()
            
+        except:
+            pass
+        
+        button_publicacoes = self.driver.find_element(By.CSS_SELECTOR, '#main > li:nth-child(5) > a')
+        button_publicacoes.click()
 
-            button_publicacoes = self.driver.find_element(By.CSS_SELECTOR, '#main > li:nth-child(5) > a')
-            button_publicacoes.click()
-
-            time.sleep(5)
-            
-        except Exception as e:
-            print("⚠️ Não foi possível fechar o popup:", e)
+        time.sleep(5)
 
 
     # /publicacaolegal
