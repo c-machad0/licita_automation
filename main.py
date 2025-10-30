@@ -3,6 +3,7 @@ import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
@@ -11,7 +12,8 @@ from selenium.common.exceptions import ElementClickInterceptedException, Element
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-from config import URLS, LOGIN, DEFAULT_DIRECTORY
+from config import URLS, LOGIN, DEFAULT_DIRECTORY, MODALIDADES, MODO_DISPUTA, INSTRUMENTO
+from reader import info_bid
 
 
 class Automation:
@@ -31,6 +33,7 @@ class Automation:
         self.publicacao_legal()
         self.indexedicao()
         self.nova_licitacao()
+        self.inserir_compra()
         self.quit_app()
 
 
@@ -111,6 +114,65 @@ class Automation:
         except Exception as e:
             print(f'{e}: Erro ao encontrar seletor')
 
+
+    # /sai/ConfiguracaoPncp/InserirCompra
+    def inserir_compra(self):
+        try:
+            # modalidade
+            select_modalidade = self.driver.find_element(By.ID, 'compra_ModalidadeId')
+            modalidade_select = Select(select_modalidade)
+            modalidade_select.select_by_visible_text(MODALIDADES['Dispensa'])
+
+            print('Opção de modalidade selecionada')
+
+            time.sleep(1)
+
+            # instrumento
+            select_instrumento = self.driver.find_element(By.ID, 'compra_TipoInstrumentoConvocatorioId')
+            instrumento_select = Select(select_instrumento)
+            instrumento_select.select_by_visible_text(INSTRUMENTO['Aviso'])
+
+            print('Opção de instrumento selecionada')
+
+            time.sleep(1)
+
+            # modo de disputa
+            select_modo = self.driver.find_element(By.ID, 'compra_ModoDisputaId')
+            modo_select = Select(select_modo)
+            modo_select.select_by_visible_text(MODO_DISPUTA['Disputa'])
+
+            print('Opção de modo selecionada')
+
+            time.sleep(1)
+
+            # n° da modalidade
+            field_num_modalidade = self.driver.find_element(By.ID, 'compra_ModoDisputaId')
+            field_num_modalidade.send_keys(info_bid['Número da Compra'])
+
+            print('N° da modalidade escrito')
+
+            # ano
+            field_num_ano = self.driver.find_element(By.ID, 'compra_AnoCompra')
+            field_num_ano.send_keys(info_bid['Ano da Compra'])
+
+            print('Ano escrito')
+
+            # local de execução
+            field_local_execução = self.driver.find_element(By.ID, 'compra_des_local_execucao_lic')
+            field_local_execução.send_keys(info_bid['Execução'])
+
+            print('Local de execução escrito')
+
+            # local do certame
+            field_local_certame = self.driver.find_element(By.ID, 'compra_des_local_certame')
+            field_local_certame.send_keys(info_bid['Certame'])
+
+            print('Local de certame escrito')
+
+            time.sleep(5)
+
+        except Exception as e:
+            print(f'{e}: Algum erro encontrado')
 
     def quit_app(self):
         self.driver.quit()
