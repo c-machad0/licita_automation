@@ -12,7 +12,7 @@ from selenium.common.exceptions import ElementClickInterceptedException, Element
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-from config import URLS, LOGIN, DEFAULT_DIRECTORY, MODALIDADES, MODO_DISPUTA, INSTRUMENTO
+from config import URLS, LOGIN, DEFAULT_DIRECTORY, INSERTION_BID
 from reader import info_bid
 
 
@@ -121,7 +121,7 @@ class Automation:
             # modalidade
             select_modalidade = self.driver.find_element(By.ID, 'compra_ModalidadeId')
             modalidade_select = Select(select_modalidade)
-            modalidade_select.select_by_visible_text(MODALIDADES['Dispensa'])
+            modalidade_select.select_by_visible_text(INSERTION_BID['Modalidades']['Dispensa'])
 
             print('Opção de modalidade selecionada')
 
@@ -130,7 +130,7 @@ class Automation:
             # instrumento
             select_instrumento = self.driver.find_element(By.ID, 'compra_TipoInstrumentoConvocatorioId')
             instrumento_select = Select(select_instrumento)
-            instrumento_select.select_by_visible_text(INSTRUMENTO['Aviso'])
+            instrumento_select.select_by_visible_text(INSERTION_BID['Instrumento']['Aviso'])
 
             print('Opção de instrumento selecionada')
 
@@ -139,7 +139,7 @@ class Automation:
             # modo de disputa
             select_modo = self.driver.find_element(By.ID, 'compra_ModoDisputaId')
             modo_select = Select(select_modo)
-            modo_select.select_by_visible_text(MODO_DISPUTA['Disputa'])
+            modo_select.select_by_visible_text(INSERTION_BID['Modo de Disputa']['Disputa'])
 
             print('Opção de modo selecionada')
 
