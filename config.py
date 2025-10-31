@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from pprint import pprint
 
 load_dotenv()
 
@@ -12,23 +13,33 @@ LOGIN = {
 
 DEFAULT_DIRECTORY = os.getenv('default_directory')
 
-INSERTION_BID = {
-    'Modalidades':{
-        'Pregão Eletrônico': '6 - Pregão - Eletrônico',
-        'Pregão Presencial': '7 - Pregão - Presencial',
-        'Dispensa': '8 - Dispensa de Licitação',
-        'Inex': '9 - Inexigibilidade',
-        'Credenciamento': '12 - Credenciamento'
-    },
-    'Instrumento': {
-        'Edital': '1 - Edital',
-        'Aviso': '2 - Aviso de Contratação Direta',
-        'Ato': '3 - Ato que autoriza a Contratação Direta',
-        'Edital CP': '4 - Edital de Chamamento Público'
-    },
-    'Modo de Disputa': {
-        'Aberto': '1 - Aberto',
-        'Disputa': '4 - Dispensa Com Disputa',
-        'Não': '5 - Não se aplica'
+MODALITIES = ['DISPENSA DE LICITAÇÃO', 'INEXIGIBILIDADE', 'PREGÃO ELETRÔNICO', 'PREGÃO PRESENCIAL', 'CREDENCIAMENTO']
+
+RELACIONAMENTOS = {
+    'Modalidade': {
+        '8 - Dispensa de Licitação': {
+            'Instrumento': ['2 - Aviso de Contratação Direta'],
+            'Modo de Disputa': ['4 - Dispensa Com Disputa'],
+            
+        },
+        '6 - Pregão Eletrônico': {
+            'Instrumento': ['1 - Edital'],
+            'Modo de Disputa': ['1 - Aberto']
+            
+        },
+        '7 - Pregão Presencial': {
+            'Instrumento': ['1 - Edital'],
+            'Modo de Disputa': ['1 - Aberto']
+            
+        },
+        '9 - Inexigibilidade': {
+            'Instrumento': ['3 - Ato que autoriza a Contratação'],
+            'Modo de Disputa': ['5 - Não se aplica']
+        },
+
+        '12 - Credenciamento': {
+            'Instrumento': ['4 - Edital de Chamamento Público'],
+            'Modo de Disputa': ['5 - Não se aplica']
+        }
     }
 }

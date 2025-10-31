@@ -12,8 +12,8 @@ from selenium.common.exceptions import ElementClickInterceptedException, Element
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-from config import URLS, LOGIN, DEFAULT_DIRECTORY, INSERTION_BID
-from reader import info_bid
+from config import URLS, LOGIN, DEFAULT_DIRECTORY
+from reader import Register
 
 
 class Automation:
@@ -117,11 +117,17 @@ class Automation:
 
     # /sai/ConfiguracaoPncp/InserirCompra
     def inserir_compra(self):
+        register = Register()
+        # select_field() popula os atributos self.modality_found_dict, self.instrumento e self.modo_disputa.
+        # Os métodos getter acessam esses atributos.
+        register.select_field() 
+        info_bid = register.read_field()
+
         try:
             # modalidade
             select_modalidade = self.driver.find_element(By.ID, 'compra_ModalidadeId')
             modalidade_select = Select(select_modalidade)
-            modalidade_select.select_by_visible_text(INSERTION_BID['Modalidades']['Dispensa'])
+            modalidade_select.select_by_visible_text(register.get_modality())
 
             print('Opção de modalidade selecionada')
 
@@ -130,7 +136,7 @@ class Automation:
             # instrumento
             select_instrumento = self.driver.find_element(By.ID, 'compra_TipoInstrumentoConvocatorioId')
             instrumento_select = Select(select_instrumento)
-            instrumento_select.select_by_visible_text(INSERTION_BID['Instrumento']['Aviso'])
+            instrumento_select.select_by_visible_text(register.get_instrumento())
 
             print('Opção de instrumento selecionada')
 
@@ -139,14 +145,14 @@ class Automation:
             # modo de disputa
             select_modo = self.driver.find_element(By.ID, 'compra_ModoDisputaId')
             modo_select = Select(select_modo)
-            modo_select.select_by_visible_text(INSERTION_BID['Modo de Disputa']['Disputa'])
+            modo_select.select_by_visible_text(register.get_modo_disputa())
 
             print('Opção de modo selecionada')
 
             time.sleep(1)
 
-            # n° da modalidade
-            field_num_modalidade = self.driver.find_element(By.ID, 'compra_ModoDisputaId')
+            # n° da modalidade. ex: 027/2025
+            field_num_modalidade = self.driver.find_element(By.ID, 'compra_NumeroCompra')
             field_num_modalidade.send_keys(info_bid['Número da Compra'])
 
             print('N° da modalidade escrito')
@@ -168,6 +174,12 @@ class Automation:
             field_local_certame.send_keys(info_bid['Certame'])
 
             print('Local de certame escrito')
+
+            # local processo administrativo
+            field_pa = self.driver.find_element(By.ID, 'compra_NumeroProcesso')
+            field_pa.send_keys(info_bid['PA'])
+
+            print('Local do Processo Adm escrito')
 
             time.sleep(5)
 
