@@ -120,8 +120,9 @@ class Automation:
         register = Register()
         # select_field() popula os atributos self.modality_found_dict, self.instrumento e self.modo_disputa.
         # Os métodos getter acessam esses atributos.
-        register.select_field() 
-        info_bid = register.read_field()
+        register.read_doc()
+        register.select_field()
+        info_bid = register.write_field()
 
         try:
             # modalidade

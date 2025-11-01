@@ -11,19 +11,26 @@ class Register:
         # Dividir o texto em linhas
         self.lines = self.text.split('\n')
 
-        # Garantir que self.lines tem linhas suficientes
-        if len(self.lines) > 10:
-            self.modality_bid = self.lines[10]
-        else:
-            self.modality_bid = ""
-
-        self.modality_bid = self.lines[10]
         self.modality_found = None
         self.modality_found_dict = None
         self.instrumento = None
         self.modo_disputa = None
 
-    def read_field(self):
+
+    def read_doc(self):
+        self.read_modality = None
+
+        # Encontrado a modalidade através do texto lido
+        for line in self.lines:
+            for modalidade in MODALITIES:
+                if modalidade in line:
+                    self.read_modality = modalidade
+                    break
+        
+        return self.read_modality.lower()
+
+
+    def write_field(self):
         num_modalidade = self.lines[10][-9:]
         num_processo = self.lines[11][-9:]
         objeto = self.lines[36] + self.lines[37] + self.lines[38]
@@ -41,26 +48,20 @@ class Register:
 
     def select_field(self):
         # Verifica se modality_bid é uma string e não vazia
-        if not self.modality_bid or not isinstance(self.modality_bid, str):
-            raise ValueError("Valor inválido em modality_bid")
+        if not self.read_modality or not isinstance(self.read_modality, str):
+            raise ValueError("Valor inválido em read_modality")
 
-        # Encontra a modalidade extraída do texto
-        for i in MODALITIES:
-            if i in self.modality_bid:
-                self.modality_found = i.lower()
-                break
-
-        if self.modality_found is None:
+        if self.read_modality is None:
             raise ValueError("Modalidade não encontrada no texto")
 
         for i in RELACIONAMENTOS: # Itera sobre todo dicionário
             for j in RELACIONAMENTOS['Modalidade'].keys(): # Itera sobre cada modalidade. Ex: Dispensa, Inex, Pregão
-                if self.modality_found in j.lower(): # Captura o nome da modalidade desejada
+                if self.read_modality.lower() in j.lower(): # Captura o nome da modalidade desejada
                     self.modality_found_dict = j # armazena a modalidade encontrada no dicionario em uma variável
                     break
 
         if self.modality_found_dict is None:
-                raise ValueError("Modalidade não encontrada no RELACIONAMENTOS")
+            raise ValueError("Modalidade não encontrada no RELACIONAMENTOS")
         
 
         # Extrai lista de instrumentos e modo de disputa correspondentes
@@ -82,12 +83,11 @@ class Register:
 
 if __name__ == '__main__':
     teste = Register()
+    name = teste.read_doc()
     teste.select_field()
-    x = teste.get_modality()
-    y = teste.get_instrumento()
-    z = teste.get_modo_disputa()
 
-    print(x, y, z)
+    print(name)
+    print(teste.get_modality(), teste.get_instrumento(), teste.get_modo_disputa())
 """
 Captação de n° de dispensa e processo adm: por meio dos 8 primeiros caracteres, fazendo de ordem inversa
 N° da modalidade estará na linha 10
