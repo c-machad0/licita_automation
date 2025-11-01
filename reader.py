@@ -18,29 +18,42 @@ class Register:
 
 
     def read_doc(self):
-        self.read_modality = None
+        """
+        Função que extrai os dados necessários do texto. [modalidade, numero da modalidade,
+        numero do processo administrativo e objeto]
+        """
 
-        # Encontrado a modalidade através do texto lido
-        for line in self.lines:
+        self.read_modality = None
+        self.read_num_modality = None
+        self.read_admprocess = None
+        self.read_object = None
+
+        # Encontrado a modalidade e seu numero através do texto lido
+        for index, line in enumerate(self.lines):
             for modalidade in MODALITIES:
                 if modalidade in line:
-                    self.read_modality = modalidade
+                    self.read_modality = modalidade # Armazenando a modalidade em read_modality
+                    self.read_num_modality = self.lines[index][-9:] # Armazenando o numero da modalidade em read_num_modality
                     break
         
-        return self.read_modality.lower()
+        for line in self.lines:
+            if 'Processo Administrativo'.upper() in line:
+                # PROCESSO ADMMINISTRATIVO N° 
+                self.read_admprocess = line[-9:]
+                break
+
+        return f'{self.read_modality.lower()} {self.read_num_modality} - Processo Administrativo: {self.read_admprocess}'
 
 
     def write_field(self):
-        num_modalidade = self.lines[10][-9:]
-        num_processo = self.lines[11][-9:]
         objeto = self.lines[36] + self.lines[37] + self.lines[38]
 
         info_bid = {
-            'Número da Compra': num_modalidade,
+            'Número da Compra': self.read_num_modality,
             'Ano da Compra': 2025,
             'Execução': 'Prefeitura Municipal de Itajuípe',
             'Certame': 'Prefeitura Municipal de Itajuípe',
-            'PA': num_processo,
+            'PA': self.read_admprocess,
             'Objeto': objeto 
         }
 
@@ -71,12 +84,15 @@ class Register:
         self.instrumento = instrumentos[0] if instrumentos else None
         self.modo_disputa = modos_disputa[0] if modos_disputa else None
 
+
     def get_modality(self):
         return self.modality_found_dict
     
+
     def get_instrumento(self):
         return self.instrumento
     
+
     def get_modo_disputa(self):
         return self.modo_disputa
 
@@ -86,7 +102,7 @@ if __name__ == '__main__':
     name = teste.read_doc()
     teste.select_field()
 
-    print(name)
+    print(name.title())
     print(teste.get_modality(), teste.get_instrumento(), teste.get_modo_disputa())
 """
 Captação de n° de dispensa e processo adm: por meio dos 8 primeiros caracteres, fazendo de ordem inversa
