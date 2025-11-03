@@ -36,17 +36,32 @@ class Register:
                     self.read_num_modality = self.lines[index][-9:] # Armazenando o numero da modalidade em read_num_modality
                     break
         
+        # Encontrar numero do processo adminstrativo
         for line in self.lines:
             if 'Processo Administrativo'.upper() in line:
                 # PROCESSO ADMMINISTRATIVO N° 
                 self.read_admprocess = line[-9:]
                 break
+        
+        result_lines = []
+        found = False
 
-        return f'{self.read_modality.lower()} {self.read_num_modality} - Processo Administrativo: {self.read_admprocess}'
+        # Encontrar objeto
+        for line in self.lines:
+            if 'Objeto'.upper() in line.upper():
+                found = True
+                continue
+            if found:
+                if line.strip() == '':
+                    break
+                result_lines.append(line)
+        
+        self.read_object = ''.join(result_lines)
+
+        return f'{self.read_modality.lower()} {self.read_num_modality} - Processo Administrativo: {self.read_admprocess} \nObjeto: {self.read_object}'
 
 
     def write_field(self):
-        objeto = self.lines[36] + self.lines[37] + self.lines[38]
 
         info_bid = {
             'Número da Compra': self.read_num_modality,
@@ -54,7 +69,7 @@ class Register:
             'Execução': 'Prefeitura Municipal de Itajuípe',
             'Certame': 'Prefeitura Municipal de Itajuípe',
             'PA': self.read_admprocess,
-            'Objeto': objeto 
+            'Objeto': self.read_object 
         }
 
         return info_bid

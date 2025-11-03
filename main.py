@@ -182,6 +182,12 @@ class Automation:
 
             print('Local do Processo Adm escrito')
 
+            # local objeto
+            field_object = self.driver.find_element(By.ID, 'ObjetoCompra')
+            field_object.send_keys(info_bid['Objeto'])
+
+            print('Local do Objeto escrito')
+
             time.sleep(5)
 
         except Exception as e:
