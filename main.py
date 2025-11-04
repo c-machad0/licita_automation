@@ -14,7 +14,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 from config import URLS, LOGIN, DEFAULT_DIRECTORY
 from reader import Register
-
+from utils import find_file_in_directory
 
 class Automation:
     def __init__(self):
@@ -199,10 +199,14 @@ class Automation:
             print('Opção tipo de documento selecionada')
 
             # Fazer upload do arquivo
-            #field_upload_file = self.driver.find_element(By.CSS_SELECTOR, "input[id='payload']")
-            #field_upload_file.send_keys(self.default_dir)
-            
-            #print('Upload do arquivo com sucesso')
+            filepath = find_file_in_directory(self.default_dir, 'Aviso de Dispensa')
+
+            if filepath is None:
+                print('Arquivo não encontrado.')
+            else:
+                field_upload_file = self.driver.find_element(By.ID  , "payload")
+                field_upload_file.send_keys(filepath)
+                print(f'Upload do arquivo {filepath} com sucesso')
 
             # selecionar código da unidade compradora
             select_code_unity_buy = self.driver.find_element(By. ID, 'compra_CodigoUnidadeCompradora')
@@ -217,7 +221,7 @@ class Automation:
 
             print('Local do Objeto escrito')
 
-            time.sleep(5)
+            time.sleep(10)
 
         except Exception as e:
             print(f'{e}: Algum erro encontrado')

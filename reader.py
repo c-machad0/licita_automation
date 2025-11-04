@@ -1,10 +1,10 @@
 from pypdf import PdfReader
-from config import MODALITIES, RELACIONAMENTOS
-
+from config import MODALITIES, RELACIONAMENTOS, DEFAULT_DIRECTORY
+from utils import find_file_in_directory
 
 class Register:
     def __init__(self):
-        self.reader = PdfReader('Dispensas/Dispensa 067/03. CONTRATO GASES MEDICINAIS - ITAOX.pdf')
+        self.reader = PdfReader(find_file_in_directory(DEFAULT_DIRECTORY, 'Contrato'.upper()))
         self.page = self.reader.pages[0]
         self.text = self.page.extract_text()
 
