@@ -51,3 +51,33 @@ RELACIONAMENTOS = {
         }
     }
 }
+
+FUNDAMENTO_LEGAL = {
+    'Modalidade': {
+        '8 - Dispensa de Licitação': {
+            'Art. 75, Inciso I': '18 - Lei 14.133/2021, Art. 75, I',
+            'Art. 75, Inciso II': '19 - Lei 14.133/2021, Art. 75, II',
+            'Art. 75, Inciso III a': '20 - Lei 14.133/2021, Art. 75, III, a',
+            'Art. 75, Inciso III b': '21 - Lei 14.133/2021, Art. 75, III, b',
+        },
+
+        '9 - Inexigibilidade': {
+            'Art. 74, Inciso I': '6 - Lei 14.133/2021, Art. 74, I',
+            'Art. 74, Inciso II': '7 - Lei 14.133/2021, Art. 74, II',
+            'Art. 74, Inciso III': '8 - Lei 14.133/2021, Art. 74, III, a',
+            'Art. 74, Inciso III': '9 - Lei 14.133/2021, Art. 74, III, b',
+            'Art. 74, Inciso III': '10 - Lei 14.133/2021, Art. 74, III, c',
+            'Art. 74, Inciso III': '11 - Lei 14.133/2021, Art. 74, III, d',
+            'Art. 74, Inciso III': '12 - Lei 14.133/2021, Art. 74, III, e',
+            'Art. 74, Inciso III': '13 - Lei 14.133/2021, Art. 74, III, f',
+            'Art. 74, Inciso III': '14 - Lei 14.133/2021, Art. 74, III, g',
+            'Art. 74, Inciso III': '15 - Lei 14.133/2021, Art. 74, III, h',
+            'Art. 74, Inciso IV': '16 - Lei 14.133/2021, Art. 74, IV',
+            'Art. 74, Inciso V': '17 - Lei 14.133/2021, Art. 74, V',
+        },
+
+        '12 - Credenciamento': {
+            'Regulamento': '125 - Regulamento Interno de Licitações e Contratos Estatais - credenciamento'
+        }
+    }
+}

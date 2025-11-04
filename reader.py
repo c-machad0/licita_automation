@@ -4,7 +4,7 @@ from config import MODALITIES, RELACIONAMENTOS
 
 class Register:
     def __init__(self):
-        self.reader = PdfReader('03. CONTRATO GASES MEDICINAIS - ITAOX.pdf')
+        self.reader = PdfReader('Dispensas/Dispensa 067/03. CONTRATO GASES MEDICINAIS - ITAOX.pdf')
         self.page = self.reader.pages[0]
         self.text = self.page.extract_text()
 
@@ -27,6 +27,8 @@ class Register:
         self.read_num_modality = None
         self.read_admprocess = None
         self.read_object = None
+        self.type_doc = None
+        self.code_unity_buy = None
 
         # Encontrado a modalidade e seu numero através do texto lido
         for index, line in enumerate(self.lines):
@@ -99,6 +101,14 @@ class Register:
         self.instrumento = instrumentos[0] if instrumentos else None
         self.modo_disputa = modos_disputa[0] if modos_disputa else None
 
+        # Selecionar tipo do documento
+        type_document = RELACIONAMENTOS['Modalidade'][self.modality_found_dict].get('Tipo de Documento', [])
+        self.type_doc = type_document[0] if type_document else None
+
+        # Selecionar Código da Und Compradora
+        code_unity_buy = RELACIONAMENTOS['Modalidade'][self.modality_found_dict].get('Código', [])
+        self.code_unity_buy = code_unity_buy[0] if code_unity_buy else None
+
 
     def get_modality(self):
         return self.modality_found_dict
@@ -110,6 +120,14 @@ class Register:
 
     def get_modo_disputa(self):
         return self.modo_disputa
+    
+    
+    def get_type_document(self):
+        return self.type_doc
+    
+
+    def get_code_unity_buy(self):
+        return self.code_unity_buy
 
 
 if __name__ == '__main__':
@@ -118,7 +136,7 @@ if __name__ == '__main__':
     teste.select_field()
 
     print(name.title())
-    print(teste.get_modality(), teste.get_instrumento(), teste.get_modo_disputa())
+    print(teste.get_modality(), teste.get_instrumento(), teste.get_modo_disputa(), teste.get_code_unity_buy(), teste.get_type_document())
 """
 Captação de n° de dispensa e processo adm: por meio dos 8 primeiros caracteres, fazendo de ordem inversa
 N° da modalidade estará na linha 10

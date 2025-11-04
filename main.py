@@ -20,6 +20,15 @@ class Automation:
     def __init__(self):
         self.default_dir = DEFAULT_DIRECTORY
         self.options = Options()
+
+        prefs = {
+            "download.default_directory": self.default_dir,
+            "download.prompt_for_download": False,
+            "download.directory_upgrade": True,
+        }
+
+        self.options.add_experimental_option("prefs", prefs)
+
         self.service = ChromeService(ChromeDriverManager().install())
         self.driver = webdriver.Chrome(service=self.service, options=self.options)
         self.driver.maximize_window() # Fazer com que as janelas sempre sejam maximizadas
@@ -181,6 +190,26 @@ class Automation:
             field_pa.send_keys(info_bid['PA'])
 
             print('Local do Processo Adm escrito')
+
+            # selecionar tipo do documento
+            select_type_doc = self.driver.find_element(By. ID, 'compra_TipoDocumentoId')
+            type_doc = Select(select_type_doc)
+            type_doc.select_by_visible_text(register.get_type_document())
+
+            print('Opção tipo de documento selecionada')
+
+            # Fazer upload do arquivo
+            #field_upload_file = self.driver.find_element(By.CSS_SELECTOR, "input[id='payload']")
+            #field_upload_file.send_keys(self.default_dir)
+            
+            #print('Upload do arquivo com sucesso')
+
+            # selecionar código da unidade compradora
+            select_code_unity_buy = self.driver.find_element(By. ID, 'compra_CodigoUnidadeCompradora')
+            code_unity_buy = Select(select_code_unity_buy)
+            code_unity_buy.select_by_visible_text(register.get_code_unity_buy())
+
+            print('Opção unidade compradora selecionada')
 
             # local objeto
             field_object = self.driver.find_element(By.ID, 'ObjetoCompra')
