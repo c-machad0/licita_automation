@@ -1,5 +1,5 @@
 import time
-
+from datetime import date, datetime
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -14,7 +14,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 from config import URLS, LOGIN, DEFAULT_DIRECTORY
 from reader import Register
-from utils import find_file_in_directory
+from utils import find_file_in_directory, fill_datetime_field
 
 class Automation:
     def __init__(self):
@@ -185,6 +185,19 @@ class Automation:
 
             print('Local de certame escrito')
 
+            start_date = date.today().strftime('%Y-%m-%d') + 'T13:00'
+            end_date = datetime.strptime('2025-11-10T23:59', '%Y-%m-%dT%H:%M').strftime('%Y-%m-%dT%H:%M')
+
+            # Formatando datas no formato ISO esperado pelo datetime-local
+            start_date = date.today().strftime('%Y-%m-%d') + 'T13:00'
+            end_date = datetime.strptime('2025-11-10T23:59', '%Y-%m-%dT%H:%M').strftime('%Y-%m-%dT%H:%M')
+
+            # Chamando função auxiliar para adicionar datas
+            fill_datetime_field(self.driver, 'compra_DataAberturaProposta', start_date)
+            fill_datetime_field(self.driver, 'compra_DataEncerramentoProposta', end_date)
+
+            print('Local de data inseridas')
+
             # local processo administrativo
             field_pa = self.driver.find_element(By.ID, 'compra_NumeroProcesso')
             field_pa.send_keys(info_bid['PA'])
@@ -220,6 +233,15 @@ class Automation:
             field_object.send_keys(info_bid['Objeto'])
 
             print('Local do Objeto escrito')
+
+            try:
+                import_items_spreadsheet = self.driver.find_element(By.LINK_TEXT, 'Importar Itens')
+                import_items_spreadsheet.click()
+
+                print('"Importar itens" clicado')
+
+            except Exception as e:
+                print(f'{e}: Erro ao encontrar seletor')
 
             time.sleep(10)
 
