@@ -191,10 +191,12 @@ class Automation:
             # Formatando datas no formato ISO esperado pelo datetime-local
             start_date = date.today().strftime('%Y-%m-%d') + 'T13:00'
             end_date = datetime.strptime('2025-11-10T23:59', '%Y-%m-%dT%H:%M').strftime('%Y-%m-%dT%H:%M')
+            contract_date = datetime.strptime('2025-11-12T13:00', '%Y-%m-%dT%H:%M').strftime('%Y-%m-%dT%H:%M')
 
             # Chamando função auxiliar para adicionar datas
             fill_datetime_field(self.driver, 'compra_DataAberturaProposta', start_date)
             fill_datetime_field(self.driver, 'compra_DataEncerramentoProposta', end_date)
+            fill_datetime_field(self.driver, 'compra_dat_contratacao_lic', contract_date)
 
             print('Local de data inseridas')
 
@@ -234,14 +236,11 @@ class Automation:
 
             print('Local do Objeto escrito')
 
-            try:
-                import_items_spreadsheet = self.driver.find_element(By.LINK_TEXT, 'Importar Itens')
-                import_items_spreadsheet.click()
+            # adicionar itens
+            add_item = self.driver.find_element(By. ID, 'add-item-compra')
+            add_item.click()
 
-                print('"Importar itens" clicado')
-
-            except Exception as e:
-                print(f'{e}: Erro ao encontrar seletor')
+            print('Adicionar itens clicado')
 
             time.sleep(10)
 
