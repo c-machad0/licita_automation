@@ -185,17 +185,14 @@ class Automation:
 
             print('Local de certame escrito')
 
-            start_date = date.today().strftime('%Y-%m-%d') + 'T13:00'
-            end_date = datetime.strptime('2025-11-10T23:59', '%Y-%m-%dT%H:%M').strftime('%Y-%m-%dT%H:%M')
-
-            # Formatando datas no formato ISO esperado pelo datetime-local
-            start_date = date.today().strftime('%Y-%m-%d') + 'T13:00'
-            end_date = datetime.strptime('2025-11-10T23:59', '%Y-%m-%dT%H:%M').strftime('%Y-%m-%dT%H:%M')
-            contract_date = datetime.strptime('2025-11-12T13:00', '%Y-%m-%dT%H:%M').strftime('%Y-%m-%dT%H:%M')
+            # Inicializando as variáveis que capturam datas
+            start_date_field, _ = register.read_notice()
+            _, end_date_field = register.read_notice()
+            contract_date = register.read_extract()
 
             # Chamando função auxiliar para adicionar datas
-            fill_datetime_field(self.driver, 'compra_DataAberturaProposta', start_date)
-            fill_datetime_field(self.driver, 'compra_DataEncerramentoProposta', end_date)
+            fill_datetime_field(self.driver, 'compra_DataAberturaProposta', start_date_field)
+            fill_datetime_field(self.driver, 'compra_DataEncerramentoProposta', end_date_field)
             fill_datetime_field(self.driver, 'compra_dat_contratacao_lic', contract_date)
 
             print('Local de data inseridas')
@@ -212,16 +209,6 @@ class Automation:
             type_doc.select_by_visible_text(register.get_type_document())
 
             print('Opção tipo de documento selecionada')
-
-            # Fazer upload do arquivo
-            filepath = find_file_in_directory(self.default_dir, 'Aviso de Dispensa')
-
-            if filepath is None:
-                print('Arquivo não encontrado.')
-            else:
-                field_upload_file = self.driver.find_element(By.ID  , "payload")
-                field_upload_file.send_keys(filepath)
-                print(f'Upload do arquivo {filepath} com sucesso')
 
             # selecionar código da unidade compradora
             select_code_unity_buy = self.driver.find_element(By. ID, 'compra_CodigoUnidadeCompradora')

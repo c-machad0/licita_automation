@@ -1,15 +1,15 @@
+import os
+from datetime import datetime
+
+
 from pypdf import PdfReader
 from config import MODALITIES, RELACIONAMENTOS, DEFAULT_DIRECTORY
-from utils import find_file_in_directory
+from utils import find_file_in_directory, convert_datetime_to_iso, calculate_useful_period
 
 class Register:
     def __init__(self):
-        self.reader = PdfReader(find_file_in_directory(DEFAULT_DIRECTORY, 'Contrato'.upper()))
-        self.page = self.reader.pages[0]
-        self.text = self.page.extract_text()
-
-        # Dividir o texto em linhas
-        self.lines = self.text.split('\n')
+        self.base_path = DEFAULT_DIRECTORY
+        self.directory = os.listdir('Dispensas/Dispensa 067')
 
         self.modality_found = None
         self.modality_found_dict = None
@@ -23,6 +23,11 @@ class Register:
         numero do processo administrativo e objeto]
         """
 
+        reader_contract = PdfReader(find_file_in_directory(DEFAULT_DIRECTORY, 'Contrato'.upper()))
+        page_contract = reader_contract.pages[0]
+        text_contract = page_contract.extract_text()
+        lines = text_contract.split('\n')
+
         self.read_modality = None
         self.read_num_modality = None
         self.read_admprocess = None
@@ -31,15 +36,15 @@ class Register:
         self.code_unity_buy = None
 
         # Encontrado a modalidade e seu numero através do texto lido
-        for index, line in enumerate(self.lines):
+        for index, line in enumerate(lines):
             for modalidade in MODALITIES:
                 if modalidade in line:
                     self.read_modality = modalidade # Armazenando a modalidade em read_modality
-                    self.read_num_modality = self.lines[index][-9:] # Armazenando o numero da modalidade em read_num_modality
+                    self.read_num_modality = lines[index][-9:] # Armazenando o numero da modalidade em read_num_modality
                     break
         
         # Encontrar numero do processo adminstrativo
-        for line in self.lines:
+        for line in lines:
             if 'Processo Administrativo'.upper() in line:
                 # PROCESSO ADMMINISTRATIVO N° 
                 self.read_admprocess = line[-9:]
@@ -49,7 +54,7 @@ class Register:
         found = False
 
         # Encontrar objeto
-        for line in self.lines:
+        for line in lines:
             if 'Objeto'.upper() in line.upper():
                 found = True
                 continue
@@ -109,6 +114,26 @@ class Register:
         code_unity_buy = RELACIONAMENTOS['Modalidade'][self.modality_found_dict].get('Código', [])
         self.code_unity_buy = code_unity_buy[0] if code_unity_buy else None
 
+    def read_extract(self):
+        reader_extract = PdfReader(find_file_in_directory(DEFAULT_DIRECTORY, 'Extrato'))
+        pages_extract = reader_extract.pages[0]
+        text_extract = pages_extract.extract_text()
+
+        lines = text_extract.split('\n')
+
+        converted_date = convert_datetime_to_iso(lines)
+        return converted_date
+
+
+    def read_notice(self):
+        reader_notice = PdfReader(find_file_in_directory(DEFAULT_DIRECTORY, 'Aviso'))
+        pages_notice = reader_notice.pages[0]
+        text_notice = pages_notice.extract_text()
+
+        lines = text_notice.split('\n')
+
+        start_date, end_date = calculate_useful_period(lines)
+        return start_date, end_date        
 
     def get_modality(self):
         return self.modality_found_dict
