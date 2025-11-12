@@ -3,8 +3,11 @@ from datetime import datetime
 
 
 from pypdf import PdfReader
-from config import MODALITIES, RELACIONAMENTOS, DEFAULT_DIRECTORY
-from utils import find_file_in_directory, convert_datetime_to_iso, calculate_useful_period
+from unidecode import unidecode
+
+
+from config import MODALITIES, RELACIONAMENTOS, DEFAULT_DIRECTORY, FUNDAMENTO_LEGAL
+from utils import find_file_in_directory, convert_datetime_to_iso, calculate_useful_period, normalize_text, remove_stopwords
 
 class Register:
     def __init__(self):
@@ -12,10 +15,10 @@ class Register:
         self.directory = os.listdir('Dispensas/Dispensa 067')
 
         self.modality_found = None
-        self.modality_found_dict = None
+        self.modality_found_final = None
         self.instrumento = None
         self.modo_disputa = None
-
+        self.amparo_legal = None
 
     def read_doc(self):
         """
@@ -92,29 +95,29 @@ class Register:
         for i in RELACIONAMENTOS: # Itera sobre todo dicionário
             for j in RELACIONAMENTOS['Modalidade'].keys(): # Itera sobre cada modalidade. Ex: Dispensa, Inex, Pregão
                 if self.read_modality.lower() in j.lower(): # Captura o nome da modalidade desejada
-                    self.modality_found_dict = j # armazena a modalidade encontrada no dicionario em uma variável
+                    self.modality_found_final = j # armazena a modalidade encontrada no dicionario em uma variável
                     break
 
-        if self.modality_found_dict is None:
+        if self.modality_found_final is None:
             raise ValueError("Modalidade não encontrada no RELACIONAMENTOS")
         
 
         # Extrai lista de instrumentos e modo de disputa correspondentes
-        instrumentos = RELACIONAMENTOS['Modalidade'][self.modality_found_dict].get('Instrumento', [])
-        modos_disputa = RELACIONAMENTOS['Modalidade'][self.modality_found_dict].get('Modo de Disputa', [])
+        instrumentos = RELACIONAMENTOS['Modalidade'][self.modality_found_final].get('Instrumento', [])
+        modos_disputa = RELACIONAMENTOS['Modalidade'][self.modality_found_final].get('Modo de Disputa', [])
 
         self.instrumento = instrumentos[0] if instrumentos else None
         self.modo_disputa = modos_disputa[0] if modos_disputa else None
 
         # Selecionar tipo do documento
-        type_document = RELACIONAMENTOS['Modalidade'][self.modality_found_dict].get('Tipo de Documento', [])
+        type_document = RELACIONAMENTOS['Modalidade'][self.modality_found_final].get('Tipo de Documento', [])
         self.type_doc = type_document[0] if type_document else None
 
         # Selecionar Código da Und Compradora
-        code_unity_buy = RELACIONAMENTOS['Modalidade'][self.modality_found_dict].get('Código', [])
+        code_unity_buy = RELACIONAMENTOS['Modalidade'][self.modality_found_final].get('Código', [])
         self.code_unity_buy = code_unity_buy[0] if code_unity_buy else None
 
-    def read_extract(self):
+    def read_extract_to_time(self):
         reader_extract = PdfReader(find_file_in_directory(DEFAULT_DIRECTORY, 'Extrato'))
         pages_extract = reader_extract.pages[0]
         text_extract = pages_extract.extract_text()
@@ -123,6 +126,39 @@ class Register:
 
         converted_date = convert_datetime_to_iso(lines)
         return converted_date
+
+
+    def read_extract_to_law(self):
+        reader_extract = PdfReader(find_file_in_directory(DEFAULT_DIRECTORY, 'Extrato'))
+        pages_extract = reader_extract.pages[0]
+        text_extract = pages_extract.extract_text()
+
+        lines = text_extract.split('\n')
+
+        fund_legal_capturada = None
+
+        for line in lines:
+            if 'Fundamentação Legal'.upper() in line:
+                fund_legal_capturada = line
+                break
+
+        text_normalized = normalize_text(fund_legal_capturada)
+        clean_text = remove_stopwords(text_normalized)
+
+        modalidade_final = None
+        for key_mod in FUNDAMENTO_LEGAL['Modalidade']:
+            if unidecode(self.modality_found_final.lower()) in unidecode(key_mod.lower()):
+                modalidade_final = key_mod
+                break
+
+        if modalidade_final:
+            artigos_dict = FUNDAMENTO_LEGAL['Modalidade'][modalidade_final]
+            if clean_text in artigos_dict:
+                self.amparo_legal = artigos_dict[clean_text]
+            else:
+                return None
+        else:
+            return None
 
 
     def read_notice(self):
@@ -136,12 +172,16 @@ class Register:
         return start_date, end_date        
 
     def get_modality(self):
-        return self.modality_found_dict
+        return self.modality_found_final
     
 
     def get_instrumento(self):
         return self.instrumento
     
+    
+    def get_amparo_legal(self):
+        return self.amparo_legal
+
 
     def get_modo_disputa(self):
         return self.modo_disputa

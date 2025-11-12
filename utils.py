@@ -1,6 +1,7 @@
 import os
 import re
 from datetime import datetime, timedelta
+from unidecode import unidecode
 
 from selenium.webdriver.common.by import By
 
@@ -105,3 +106,35 @@ def calculate_useful_period(lines):
         end_date_iso = end_date_formated.strftime('%Y-%m-%dT13:00')
         
     return start_date_iso, end_date_iso
+
+
+def normalize_text(text):
+    """
+    Função que faz a normalização do texto da lei retirado do extrato. Fazendo com que as pontuações e os espaços sejam retirados
+    Ex1: ART 75, CAPUT, INCISO II DA LEI 14.133/21 -> art_75_caput_inciso_ii_da_lei_1413321
+    Ex2: ART 75, CAPUT, INCISO III, ALÍNEA "A" DA LEI 14.133/21 -> art_75_caput_inciso_iii_alinea_a_da_lei_1413321
+    """
+    text = unidecode(text.lower())
+    text = re.sub(r'[\.\,\-\(\)\/\"]', '', text)  # Retirando as pontuações
+    text = re.sub(r'\s+', ' ', text).strip()  # Retirando todos os espaços a mais
+    text = re.sub(r'fundamentacao legal[:\s]*', '', text, flags=re.IGNORECASE)  # Retirando o termo 'fundamentacao legal'
+    text = text.replace(' ', '_')
+    return text
+
+
+def remove_stopwords(text):
+    """
+    Função que remove as stopwords específicas que podem ser retiradas do extrato, como inciso, caput, lei, etc.
+    A remoção é necessária para que a saída seja:
+    Ex1: art_75_caput_inciso_ii_da_lei_1413321 -> art_75_ii
+    Ex2: art_75_caput_inciso_iii_alinea_a_da_lei_1413321 -> art_75_iii_a
+
+    Essa saída fará referência que as chaves referenciadas no arquivo config.py, para capturar os valores
+    correspondentes e selecionar via selenium
+
+    A ordem de chamada é normalizar_texto() -> remove_stopwords()
+    """
+    law_stopwords = ['da', 'de', 'lei', 'caput', 'do', 'inciso', '1413321', 'alinea', '866693']
+    words = text.split('_')  # Aqui faz split por underlinetext.split()
+    filtered = [word for word in words if word not in law_stopwords]
+    return '_'.join(filtered)

@@ -131,6 +131,7 @@ class Automation:
         # Os métodos getter acessam esses atributos.
         register.read_doc()
         register.select_field()
+        register.read_extract_to_law()
         info_bid = register.write_field()
 
         try:
@@ -149,6 +150,14 @@ class Automation:
             instrumento_select.select_by_visible_text(register.get_instrumento())
 
             print('Opção de instrumento selecionada')
+
+            time.sleep(1)
+
+            select_amparo_legal = self.driver.find_element(By. ID, 'compra_AmparoLegalId')
+            amparo_legal_select = Select(select_amparo_legal)
+            amparo_legal_select.select_by_visible_text(register.get_amparo_legal())
+            
+            print('Opção de amparo legal selecionada')
 
             time.sleep(1)
 
@@ -188,7 +197,7 @@ class Automation:
             # Inicializando as variáveis que capturam datas
             start_date_field, _ = register.read_notice()
             _, end_date_field = register.read_notice()
-            contract_date = register.read_extract()
+            contract_date = register.read_extract_to_time()
 
             # Chamando função auxiliar para adicionar datas
             fill_datetime_field(self.driver, 'compra_DataAberturaProposta', start_date_field)

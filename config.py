@@ -55,25 +55,25 @@ RELACIONAMENTOS = {
 FUNDAMENTO_LEGAL = {
     'Modalidade': {
         '8 - Dispensa de Licitação': {
-            'Art. 75, Inciso I': '18 - Lei 14.133/2021, Art. 75, I',
-            'Art. 75, Inciso II': '19 - Lei 14.133/2021, Art. 75, II',
-            'Art. 75, Inciso III a': '20 - Lei 14.133/2021, Art. 75, III, a',
-            'Art. 75, Inciso III b': '21 - Lei 14.133/2021, Art. 75, III, b',
+            'art_75_i': '18 - Lei 14.133/2021, Art. 75, I',
+            'art_75_ii': '19 - Lei 14.133/2021, Art. 75, II',
+            'art_75_iii_a': '20 - Lei 14.133/2021, Art. 75, III, a',
+            'art_75_iii_b': '21 - Lei 14.133/2021, Art. 75, III, b',
         },
 
         '9 - Inexigibilidade': {
-            'Art. 74, Inciso I': '6 - Lei 14.133/2021, Art. 74, I',
-            'Art. 74, Inciso II': '7 - Lei 14.133/2021, Art. 74, II',
-            'Art. 74, Inciso III': '8 - Lei 14.133/2021, Art. 74, III, a',
-            'Art. 74, Inciso III': '9 - Lei 14.133/2021, Art. 74, III, b',
-            'Art. 74, Inciso III': '10 - Lei 14.133/2021, Art. 74, III, c',
-            'Art. 74, Inciso III': '11 - Lei 14.133/2021, Art. 74, III, d',
-            'Art. 74, Inciso III': '12 - Lei 14.133/2021, Art. 74, III, e',
-            'Art. 74, Inciso III': '13 - Lei 14.133/2021, Art. 74, III, f',
-            'Art. 74, Inciso III': '14 - Lei 14.133/2021, Art. 74, III, g',
-            'Art. 74, Inciso III': '15 - Lei 14.133/2021, Art. 74, III, h',
-            'Art. 74, Inciso IV': '16 - Lei 14.133/2021, Art. 74, IV',
-            'Art. 74, Inciso V': '17 - Lei 14.133/2021, Art. 74, V',
+            'art_74_i': '6 - Lei 14.133/2021, Art. 74, I',
+            'art_74_ii': '7 - Lei 14.133/2021, Art. 74, II',
+            'art_74_iii_a': '8 - Lei 14.133/2021, Art. 74, III, a',
+            'art_74_iii_b': '9 - Lei 14.133/2021, Art. 74, III, b',
+            'art_74_iii_c': '10 - Lei 14.133/2021, Art. 74, III, c',
+            'art_74_iii_d': '11 - Lei 14.133/2021, Art. 74, III, d',
+            'art_74_iii_e': '12 - Lei 14.133/2021, Art. 74, III, e',
+            'art_74_iii_f': '13 - Lei 14.133/2021, Art. 74, III, f',
+            'art_74_iii_g': '14 - Lei 14.133/2021, Art. 74, III, g',
+            'art_74_iii_h': '15 - Lei 14.133/2021, Art. 74, III, h',
+            'art_74_iv': '16 - Lei 14.133/2021, Art. 74, IV',
+            'art_74_v': '17 - Lei 14.133/2021, Art. 74, V',
         },
 
         '12 - Credenciamento': {
