@@ -2,6 +2,7 @@ import os
 import re
 from datetime import datetime, timedelta
 from unidecode import unidecode
+import pandas as pd
 
 from selenium.webdriver.common.by import By
 
@@ -138,3 +139,17 @@ def remove_stopwords(text):
     words = text.split('_')  # Aqui faz split por underlinetext.split()
     filtered = [word for word in words if word not in law_stopwords]
     return '_'.join(filtered)
+
+
+def extract_all_items(df):
+
+    linha = 1
+
+    return {
+        'index': df.iloc[linha]['Número do Item'],
+        'descricao': df.iloc[linha]['Descrição'],
+        'und': df.iloc[linha]['Unidade Medida'],
+        'qtd': df.iloc[linha]['Quantidade'],
+        'valor_unit': df.iloc[linha]['Valor Unitário Estimado'],
+        'valor_total': df.iloc[linha]['Valor Total']
+    }

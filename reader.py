@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+import pandas as pd
 
 
 from pypdf import PdfReader
@@ -7,7 +8,7 @@ from unidecode import unidecode
 
 
 from config import MODALITIES, RELACIONAMENTOS, DEFAULT_DIRECTORY, FUNDAMENTO_LEGAL
-from utils import find_file_in_directory, convert_datetime_to_iso, calculate_useful_period, normalize_text, remove_stopwords
+from utils import find_file_in_directory, convert_datetime_to_iso, calculate_useful_period, normalize_text, remove_stopwords, extract_all_items
 
 class Register:
     def __init__(self):
@@ -165,6 +166,16 @@ class Register:
         lines = self.read_pdf_lines('Aviso')
         start_date, end_date = calculate_useful_period(lines)
         return start_date, end_date        
+
+    
+    def read_spreadsheet(self):
+        filepath = find_file_in_directory(DEFAULT_DIRECTORY, 'Itens')
+        if not filepath:
+            raise FileNotFoundError("Arquivo não encontrado.")
+        df = pd.read_excel(filepath)
+        return extract_all_items(df)
+
+
 
     def get_modality(self):
         return self.modality_found_final
