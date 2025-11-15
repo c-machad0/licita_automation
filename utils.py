@@ -141,15 +141,16 @@ def remove_stopwords(text):
     return '_'.join(filtered)
 
 
-def extract_all_items(df):
+def extract_all_items():
 
-    linha = 1
+    df = pd.read_excel('Dispensas/Dispensa 067/Itens.xlsx')
 
-    return {
-        'index': df.iloc[linha]['Número do Item'],
-        'descricao': df.iloc[linha]['Descrição'],
-        'und': df.iloc[linha]['Unidade Medida'],
-        'qtd': df.iloc[linha]['Quantidade'],
-        'valor_unit': df.iloc[linha]['Valor Unitário Estimado'],
-        'valor_total': df.iloc[linha]['Valor Total']
-    }
+    lista_itens = []
+
+    for _, row in df.iterrows():
+        item = {}
+        for col in df.columns:
+            item[col] = row[col]
+        lista_itens.append(item)
+
+    return lista_itens

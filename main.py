@@ -14,7 +14,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 from config import URLS, LOGIN, DEFAULT_DIRECTORY
 from reader import Register
-from utils import find_file_in_directory, fill_datetime_field
+from utils import find_file_in_directory, fill_datetime_field, extract_all_items
 
 class Automation:
     def __init__(self):
@@ -43,6 +43,7 @@ class Automation:
         self.indexedicao()
         self.nova_licitacao()
         self.inserir_compra()
+        self.add_item()
         self.quit_app()
 
 
@@ -232,16 +233,86 @@ class Automation:
 
             print('Local do Objeto escrito')
 
-            # adicionar itens
-            add_item = self.driver.find_element(By. ID, 'add-item-compra')
-            add_item.click()
-
-            print('Adicionar itens clicado')
-
             time.sleep(10)
 
         except Exception as e:
             print(f'{e}: Algum erro encontrado')
+
+    def add_item(self):
+        lista_itens = extract_all_items()
+
+        for item in lista_itens:
+            botao_add_itens = self.driver.find_element(By. ID, 'add-item-compra')
+            botao_add_itens.click()
+
+            field_descricao = WebDriverWait(self.driver, 7).until(
+                EC.visibility_of_element_located((By.ID, 'Descricao'))
+            )
+            field_descricao.send_keys(item['Descrição'])
+
+            texto_desejado = str(item['Critério de Julgamento']).lower().strip().replace('–', '-')
+            select_julgamento = self.driver.find_element(By.ID, 'CriterioJulgamentoId')
+            julgamento_select = Select(select_julgamento)
+
+            # Tenta encontrar a opção mais próxima
+            selecionado = False
+            for option in julgamento_select.options:
+                texto_option = option.text.lower().strip().replace('–', '-')
+                if texto_desejado in texto_option or texto_option in texto_desejado:
+                    julgamento_select.select_by_visible_text(option.text)
+                    selecionado = True
+                    break
+            if not selecionado:
+                print(f"Não foi possível localizar opção para: {texto_desejado}")
+                
+            field_und = self.driver.find_element(By.ID, 'UnidadeMedida')
+            field_und.send_keys(item['Unidade Medida'])
+
+            select_type_item = self.driver.find_element(By.ID, 'MaterialOuServico')
+            type_item_select = Select(select_type_item)
+            type_item_select.select_by_visible_text(item['Material ou Serviço'])
+
+            field_num_item = self.driver.find_element(By.ID, 'NumeroItem')
+            field_num_item.send_keys(item['Número do Item'])
+
+            field_quantidade_item = self.driver.find_element(By.ID, 'Quantidade')
+            field_quantidade_item.send_keys(item['Quantidade'])
+
+            field_valor_total = self.driver.find_element(By.ID, 'ValorTotal')
+            field_valor_total.send_keys(item['Valor Total'])
+
+            field_valor_unit = self.driver.find_element(By.ID, 'ValorUnitarioEstimado')
+            field_valor_unit.send_keys(item['Valor Unitário Estimado'])
+
+            select_incentivo = self.driver.find_element(By.ID, 'IncentivoProdutivoBasico')
+            incentivo_select = Select(select_incentivo)
+            incentivo_select.select_by_visible_text(item['Incentivo Produto Básico'])
+
+            select_tipo_beneficio = self.driver.find_element(By. ID, 'TipoBeneficioId')
+            tipo_beneficio_select = Select(select_tipo_beneficio)
+            tipo_beneficio_select.select_by_visible_text(item['Tipo de Benefício'])
+
+            select_orcamento_sigilioso = self.driver.find_element(By.ID, 'OrcamentoSigiloso')
+            orcamento_sigiloso_select = Select(select_orcamento_sigilioso)
+            orcamento_sigiloso_select.select_by_visible_text(item['Orçamento Sigiloso'])
+
+            select_categoria_item = self.driver.find_element(By.ID, 'ItemCategoriaId')
+            categoria_item_select = Select(select_categoria_item)
+            categoria_item_select.select_by_visible_text(item['Categoria do Item'])
+
+            botao_submit = WebDriverWait(self.driver, 5).until(
+                EC.element_to_be_clickable((By.ID, 'btn-add-item-compra'))
+            )
+
+            # Rolar até o botão para garantir visibilidade
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", botao_submit)
+            botao_submit.click()
+
+            WebDriverWait(self.driver, 5).until(
+                EC.invisibility_of_element_located(By.ID, 'Descricao')
+            )
+
+            time.sleep(5)
 
     def quit_app(self):
         self.driver.quit()
