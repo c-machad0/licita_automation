@@ -176,6 +176,7 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python
 
 # Arquivos auxiliares
+exemplo_json.json
 arquitetura.txt
 arquitetura.md
 aprendizado.txt

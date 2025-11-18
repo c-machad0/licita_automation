@@ -142,15 +142,34 @@ def remove_stopwords(text):
 
 
 def extract_all_items():
-
+    """
+    Para cada coluna existente em df.columns, adiciona a chave col com o valor correspondente daquela célula da linha atual: row[col].
+    Ou seja, transforma uma linha do DataFrame em um dicionário Python que mapeia nomes de coluna para valores.
+    Exemplo: A primeira linha da coluna Número do Item tem o valor 1, 
+    então item["Número do Item"] = row["Número do Item"] -> item["Número do Item"] = 1
+    """
     df = pd.read_excel('Dispensas/Dispensa 067/Itens.xlsx')
 
     lista_itens = []
 
-    for _, row in df.iterrows():
-        item = {}
-        for col in df.columns:
-            item[col] = row[col]
+    for _, row in df.iterrows(): # Percorre uma linha de cada vez
+        item = {} # Cria um dicionário vazio
+        for col in df.columns: # Percorre cada coluna daquela linha
+            item[col] = row[col] # Adiciona par chave-valor ao dicionário. Exemplo -> (Coluna) Descrição: (Valor) Caneta
         lista_itens.append(item)
 
     return lista_itens
+
+def normalize_select_option_item(desired_select, desired_text):
+    """
+    Função que aplica todas as regras de normalização que você definir (ex: lower, strip, substituir hífen...).
+    Recebe a string pre processada já comparada com o texto do excel e compara novamente com a string do dropdown list
+    Exemplo: Na coluna "Critério de Julgamento", busco o valor da primeira linha (1 - Menor Preço), normalizo essa string
+    e comparo com a string do dropdown list daquele elemento da página, caso seja igual, aquela opção é selecionada
+    Nesse caso, como o arquivo excel pode modificar o padrão do hífen, trocamos o caracter U+2013 "–", por "-"
+    """
+    for option in desired_select.options:
+        texto_option = option.text.lower().strip().replace('–', '-')
+        if desired_text in texto_option or texto_option in desired_text:
+            desired_select.select_by_visible_text(option.text)
+            break
