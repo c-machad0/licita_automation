@@ -33,7 +33,14 @@ class Automation:
         self.driver = webdriver.Chrome(service=self.service, options=self.options)
         self.driver.maximize_window() # Fazer com que as janelas sempre sejam maximizadas
 
-
+        self.register = Register()
+        # select_field() popula os atributos self.modality_found_dict, self.instrumento e self.modo_disputa.
+        # Os mtodos getter acessam esses atributos.
+        self.register.read_doc()
+        self.register.select_field()
+        self.register.read_extract_to_law()
+        self.info_bid = self.register.write_field()
+        
     # Orquestrador
     def run_script(self):
         self.access_url()
@@ -41,13 +48,32 @@ class Automation:
         self.home()
         self.publicacao_legal()
         self.indexedicao()
-        self.nova_licitacao()
-        self.inserir_compra()
-        self.quit_app()
+
+        if self.consult_licita():
+            self.quit_app()
+        else:
+            print('Não existe. Programa continuando')
+            self.nova_licitacao()
+            self.inserir_compra()
+            self.quit_app()
 
 
     def access_url(self):
         self.driver.get(URLS[0])
+
+
+    def consult_licita(self):
+        field_numero_licita = self.driver.find_element(By.ID, 'search_NumeroLicitacao')
+        field_numero_licita.send_keys(self.info_bid['Número da Compra'])
+
+        field_numero_processo = self.driver.find_element(By.ID, 'search_NumeroProcesso')
+        field_numero_processo.send_keys(self.info_bid['PA'])
+
+        # Busca por todas as células (td) que contenham esse número de licitação
+        page_elements_licita = self.driver.find_elements(By.XPATH, f"//td[contains(text(), '{self.info_bid['Número da Compra']}')]")
+
+        # Se encontrar 1 ou mais elementos, retorna que existe
+        return len(page_elements_licita) > 0
 
 
     # /Account/Login
@@ -126,19 +152,12 @@ class Automation:
 
     # /sai/ConfiguracaoPncp/InserirCompra
     def inserir_compra(self):
-        register = Register()
-        # select_field() popula os atributos self.modality_found_dict, self.instrumento e self.modo_disputa.
-        # Os métodos getter acessam esses atributos.
-        register.read_doc()
-        register.select_field()
-        register.read_extract_to_law()
-        info_bid = register.write_field()
 
         try:
             # modalidade
             select_modalidade = self.driver.find_element(By.ID, 'compra_ModalidadeId')
             modalidade_select = Select(select_modalidade)
-            modalidade_select.select_by_visible_text(register.get_modality())
+            modalidade_select.select_by_visible_text(self.register.get_modality())
 
             print('Opção de modalidade selecionada')
 
@@ -147,7 +166,7 @@ class Automation:
             # instrumento
             select_instrumento = self.driver.find_element(By.ID, 'compra_TipoInstrumentoConvocatorioId')
             instrumento_select = Select(select_instrumento)
-            instrumento_select.select_by_visible_text(register.get_instrumento())
+            instrumento_select.select_by_visible_text(self.register.get_instrumento())
 
             print('Opção de instrumento selecionada')
 
@@ -155,7 +174,7 @@ class Automation:
 
             select_amparo_legal = self.driver.find_element(By. ID, 'compra_AmparoLegalId')
             amparo_legal_select = Select(select_amparo_legal)
-            amparo_legal_select.select_by_visible_text(register.get_amparo_legal())
+            amparo_legal_select.select_by_visible_text(self.register.get_amparo_legal())
             
             print('Opção de amparo legal selecionada')
 
@@ -164,7 +183,7 @@ class Automation:
             # modo de disputa
             select_modo = self.driver.find_element(By.ID, 'compra_ModoDisputaId')
             modo_select = Select(select_modo)
-            modo_select.select_by_visible_text(register.get_modo_disputa())
+            modo_select.select_by_visible_text(self.register.get_modo_disputa())
 
             print('Opção de modo selecionada')
 
@@ -172,32 +191,32 @@ class Automation:
 
             # n° da modalidade. ex: 027/2025
             field_num_modalidade = self.driver.find_element(By.ID, 'compra_NumeroCompra')
-            field_num_modalidade.send_keys(info_bid['Número da Compra'])
+            field_num_modalidade.send_keys(self.info_bid['Número da Compra'])
 
             print('N° da modalidade escrito')
 
             # ano
             field_num_ano = self.driver.find_element(By.ID, 'compra_AnoCompra')
-            field_num_ano.send_keys(info_bid['Ano da Compra'])
+            field_num_ano.send_keys(self.info_bid['Ano da Compra'])
 
             print('Ano escrito')
 
             # local de execução
             field_local_execução = self.driver.find_element(By.ID, 'compra_des_local_execucao_lic')
-            field_local_execução.send_keys(info_bid['Execução'])
+            field_local_execução.send_keys(self.info_bid['Execução'])
 
             print('Local de execução escrito')
 
             # local do certame
             field_local_certame = self.driver.find_element(By.ID, 'compra_des_local_certame')
-            field_local_certame.send_keys(info_bid['Certame'])
+            field_local_certame.send_keys(self.info_bid['Certame'])
 
             print('Local de certame escrito')
 
             # Inicializando as variáveis que capturam datas
-            start_date_field, _ = register.read_notice()
-            _, end_date_field = register.read_notice()
-            contract_date = register.read_extract_to_time()
+            start_date_field, _ = self.register.read_notice()
+            _, end_date_field = self.register.read_notice()
+            contract_date = self.register.read_extract_to_time()
 
             # Chamando função auxiliar para adicionar datas
             fill_datetime_field(self.driver, 'compra_DataAberturaProposta', start_date_field)
@@ -208,14 +227,14 @@ class Automation:
 
             # local processo administrativo
             field_pa = self.driver.find_element(By.ID, 'compra_NumeroProcesso')
-            field_pa.send_keys(info_bid['PA'])
+            field_pa.send_keys(self.info_bid['PA'])
 
             print('Local do Processo Adm escrito')
 
             # selecionar tipo do documento
             select_type_doc = self.driver.find_element(By. ID, 'compra_TipoDocumentoId')
             type_doc = Select(select_type_doc)
-            type_doc.select_by_visible_text(register.get_type_document())
+            type_doc.select_by_visible_text(self.register.get_type_document())
 
             print('Opção tipo de documento selecionada')
 
@@ -226,13 +245,13 @@ class Automation:
             # selecionar código da unidade compradora
             select_code_unity_buy = self.driver.find_element(By. ID, 'compra_CodigoUnidadeCompradora')
             code_unity_buy = Select(select_code_unity_buy)
-            code_unity_buy.select_by_visible_text(register.get_code_unity_buy())
+            code_unity_buy.select_by_visible_text(self.register.get_code_unity_buy())
 
             print('Opção unidade compradora selecionada')
 
             # local objeto
             field_object = self.driver.find_element(By.ID, 'ObjetoCompra')
-            field_object.send_keys(info_bid['Objeto'])
+            field_object.send_keys(self.info_bid['Objeto'])
 
             print('Local do Objeto escrito')
 
