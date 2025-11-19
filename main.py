@@ -55,6 +55,7 @@ class Automation:
             print('Não existe. Programa continuando')
             self.nova_licitacao()
             self.inserir_compra()
+            self.upload_arquivos_licitacao()
             self.quit_app()
 
 
@@ -337,6 +338,25 @@ class Automation:
             )
 
             time.sleep(5)
+
+    def upload_arquivos_licitacao(self):
+
+        # Espera algum seletor estar visível para seguir o fluxo da função. Nesse caso, o seletor de Numero da Licitação
+        WebDriverWait(self.driver, 7).until(
+            EC.visibility_of_element_located(By.ID, 'search_NumeroLicitacao')
+        )
+
+        if self.consult_licita():
+            try:
+                field_fases = WebDriverWait(self.driver, 10).until(
+                    EC.presence_of_element_located((By.XPATH, "//*[@id='main']/div/div/article/div/table/tbody/tr[2]/td[12]/a/span[@title='Fases']"))
+                )
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", field_fases)
+                field_fases.click()
+            except Exception:
+                print('Botão não encontrado')
+        else:
+            print('Licitação não encontrada.')
 
     def quit_app(self):
         self.driver.quit()
