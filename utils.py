@@ -176,6 +176,7 @@ def extract_all_items():
 
     return lista_itens
 
+
 def normalize_select_option_item(desired_select, desired_text):
     """
     Função que aplica todas as regras de normalização que você definir (ex: lower, strip, substituir hífen...).

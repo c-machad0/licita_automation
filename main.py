@@ -1,6 +1,7 @@
 import time
 from datetime import date, datetime
 
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
@@ -15,6 +16,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from config import URLS, LOGIN, DEFAULT_DIRECTORY, DOWNLOAD_DIRECTORY
 from reader import Register
 from utils import find_file_in_directory, fill_datetime_field, extract_all_items, normalize_select_option_item
+
 
 class Automation:
     def __init__(self):
@@ -49,14 +51,15 @@ class Automation:
         self.publicacao_legal()
         self.indexedicao()
 
-        if self.consult_licita():
-            self.quit_app()
-        else:
+        self.consult_licita()
+        self.upload_arquivos_licitacao()
+        self.quit_app()
+        """else:
             print('Não existe. Programa continuando')
             self.nova_licitacao()
             self.inserir_compra()
             #self.upload_arquivos_licitacao()
-            self.quit_app()
+            self.quit_app()"""
 
 
     def access_url(self):
@@ -268,6 +271,7 @@ class Automation:
         except Exception as e:
             print(f'{e}: Algum erro encontrado')
 
+
     def add_item(self):
         lista_itens = extract_all_items()
 
@@ -339,29 +343,33 @@ class Automation:
 
             time.sleep(5)
 
+    # LicitacaoContrato/FasesLicitacao/
     def upload_arquivos_licitacao(self):
 
         # Espera algum seletor estar visível para seguir o fluxo da função. Nesse caso, o seletor de Numero da Licitação
         WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located(By.ID, 'search_NumeroLicitacao')
+            EC.visibility_of_element_located((By.ID, 'search_NumeroLicitacao'))
         )
 
-        if self.consult_licita():
-            try:
+        #if self.consult_licita():
+        try:
                 field_fases = WebDriverWait(self.driver, 10).until(
                     EC.presence_of_element_located((By.XPATH, "//*[@id='main']/div/div/article/div/table/tbody/tr[2]/td[12]/a/span[@title='Fases']"))
                 )
                 self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", field_fases)
                 field_fases.click()
-            except Exception:
+        except Exception:
                 print('Botão não encontrado')
-        else:
-            print('Licitação não encontrada.')
+        #else:
+        #    print('Licitação não encontrada.')
 
-        field_contrato_pncp = self.driver.find_element(By. CSS_SELECTOR, '#timeline > li:nth-child(2) > div:nth-child(2) > a')
+        field_contrato_pncp = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.LINK_TEXT, "Pendente"))
+            )
         field_contrato_pncp.click()
 
         time.sleep(5)
+
 
     def quit_app(self):
         self.driver.quit()

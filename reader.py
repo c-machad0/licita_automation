@@ -10,6 +10,7 @@ from unidecode import unidecode
 from config import MODALITIES, RELACIONAMENTOS, DEFAULT_DIRECTORY, FUNDAMENTO_LEGAL
 from utils import find_file_in_directory, convert_datetime_to_iso, calculate_useful_period, normalize_text, remove_stopwords, extract_all_items
 
+
 class Register:
     def __init__(self):
         self.base_path = DEFAULT_DIRECTORY
@@ -20,6 +21,7 @@ class Register:
         self.instrumento = None
         self.modo_disputa = None
         self.amparo_legal = None
+
 
     def read_doc(self):
         """
@@ -81,6 +83,7 @@ class Register:
         }
 
         return info_bid
+
 
     def select_field(self):
         # Verifica se modality_bid é uma string e não vazia
