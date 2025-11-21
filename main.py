@@ -12,7 +12,7 @@ from selenium.common.exceptions import ElementClickInterceptedException, Element
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-from config import URLS, LOGIN, DEFAULT_DIRECTORY
+from config import URLS, LOGIN, DEFAULT_DIRECTORY, DOWNLOAD_DIRECTORY
 from reader import Register
 from utils import find_file_in_directory, fill_datetime_field, extract_all_items, normalize_select_option_item
 
@@ -22,7 +22,7 @@ class Automation:
         self.options = Options()
 
         prefs = {
-            "download.default_directory": self.default_dir,
+            "download.default_directory": DOWNLOAD_DIRECTORY,
             "download.prompt_for_download": False,
             "download.directory_upgrade": True,
         }
@@ -55,7 +55,7 @@ class Automation:
             print('Não existe. Programa continuando')
             self.nova_licitacao()
             self.inserir_compra()
-            self.upload_arquivos_licitacao()
+            #self.upload_arquivos_licitacao()
             self.quit_app()
 
 
@@ -342,7 +342,7 @@ class Automation:
     def upload_arquivos_licitacao(self):
 
         # Espera algum seletor estar visível para seguir o fluxo da função. Nesse caso, o seletor de Numero da Licitação
-        WebDriverWait(self.driver, 7).until(
+        WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located(By.ID, 'search_NumeroLicitacao')
         )
 
@@ -357,6 +357,11 @@ class Automation:
                 print('Botão não encontrado')
         else:
             print('Licitação não encontrada.')
+
+        field_contrato_pncp = self.driver.find_element(By. CSS_SELECTOR, '#timeline > li:nth-child(2) > div:nth-child(2) > a')
+        field_contrato_pncp.click()
+
+        time.sleep(5)
 
     def quit_app(self):
         self.driver.quit()

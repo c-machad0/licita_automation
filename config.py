@@ -12,6 +12,7 @@ LOGIN = {
 }
 
 DEFAULT_DIRECTORY = os.getenv('default_directory')
+DOWNLOAD_DIRECTORY = os.getenv('download_directory')
 
 MODALITIES = ['DISPENSA DE LICITAÇÃO', 'INEXIGIBILIDADE', 'PREGÃO ELETRÔNICO', 'PREGÃO PRESENCIAL', 'CREDENCIAMENTO']
 

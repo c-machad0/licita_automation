@@ -1,12 +1,17 @@
 import os
 import re
 from datetime import datetime, timedelta
+import glob
+
+
 from unidecode import unidecode
 import pandas as pd
 
+
 from selenium.webdriver.common.by import By
 
-from config import MONTHS
+
+from config import MONTHS, DEFAULT_DIRECTORY
 
 
 def find_file_in_directory(directory, keyword):
@@ -91,20 +96,20 @@ def calculate_useful_period(lines):
     start_date_iso = start_date_formated.strftime('%Y-%m-%dT13:00') # Transforma o objeto datetime em formato ISO 8601
 
     end_date_formated = start_date_formated + timedelta(days=3) # Calcula a data final como data inicial + 3
-    end_date_iso = end_date_formated.strftime('%Y-%m-%dT13:00') # Transforma a data final em formato ISO 8601
+    end_date_iso = end_date_formated.strftime('%Y-%m-%dT23:59') # Transforma a data final em formato ISO 8601
 
     # Faz a verificação para saber se a data final cairá num final de semana
     if start_date_formated.weekday() == 2: # Quarta
         end_date_formated = start_date_formated + timedelta(days=5)
-        end_date_iso = end_date_formated.strftime('%Y-%m-%dT13:00')
+        end_date_iso = end_date_formated.strftime('%Y-%m-%dT23:59')
 
     elif start_date_formated.weekday() == 3: # Quinta
         end_date_formated = start_date_formated + timedelta(days=5)
-        end_date_iso = end_date_formated.strftime('%Y-%m-%dT13:00')
+        end_date_iso = end_date_formated.strftime('%Y-%m-%dT23:59')
 
     elif start_date_formated.weekday() == 4: # Sexta
         end_date_formated = start_date_formated + timedelta(days=5)
-        end_date_iso = end_date_formated.strftime('%Y-%m-%dT13:00')
+        end_date_iso = end_date_formated.strftime('%Y-%m-%dT23:59')
         
     return start_date_iso, end_date_iso
 
@@ -148,7 +153,18 @@ def extract_all_items():
     Exemplo: A primeira linha da coluna Número do Item tem o valor 1, 
     então item["Número do Item"] = row["Número do Item"] -> item["Número do Item"] = 1
     """
-    df = pd.read_excel('Dispensas/Dispensa 067/Itens.xlsx')
+
+    folderpath = DEFAULT_DIRECTORY
+    file_type = "*.xlsx"
+    target_file = glob.glob(os.path.join(folderpath, file_type)) # Glob retorna uma lista
+
+    if not target_file:
+        print('Arquivo não encontrado')
+        return
+    
+    file_path = target_file[0] # Pega o primeiro elemento da lista
+
+    df = pd.read_excel(file_path)
 
     lista_itens = []
 

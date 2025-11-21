@@ -13,7 +13,7 @@ from utils import find_file_in_directory, convert_datetime_to_iso, calculate_use
 class Register:
     def __init__(self):
         self.base_path = DEFAULT_DIRECTORY
-        self.directory = os.listdir('Dispensas/Dispensa 067')
+        self.directory = os.listdir('Licitações/Novas Licitações/Dispensa 067')
 
         self.modality_found = None
         self.modality_found_final = None
@@ -199,18 +199,3 @@ class Register:
 
     def get_code_unity_buy(self):
         return self.code_unity_buy
-
-
-if __name__ == '__main__':
-    teste = Register()
-    name = teste.read_doc()
-    teste.select_field()
-
-    print(name.title())
-    print(teste.get_modality(), teste.get_instrumento(), teste.get_modo_disputa(), teste.get_code_unity_buy(), teste.get_type_document())
-"""
-Captação de n° de dispensa e processo adm: por meio dos 8 primeiros caracteres, fazendo de ordem inversa
-N° da modalidade estará na linha 10
-N° do PA estará na linha 11
-N° do objeto da linha 36 a 38
-"""
