@@ -58,7 +58,7 @@ class Automation:
             print('Não existe. Programa continuando')
             self.nova_licitacao()
             self.inserir_compra()
-            #self.upload_arquivos_licitacao()
+            self.upload_arquivos_licitacao()
             self.quit_app()"""
 
 
@@ -367,10 +367,23 @@ class Automation:
             EC.element_to_be_clickable((By.LINK_TEXT, "Pendente"))
             )
         field_contrato_pncp.click()
+        # Função para registro do contrato
+
+        field_extrato = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.ID, 'ButtonFase_15'))
+        )
+        field_extrato.click()
+        # Função para upload do extrato
+
+        field_ratificacao = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.ID, 'ButtonFase_16'))
+        )
+        field_ratificacao.click()
+        # Função para upload da ratificação
 
         time.sleep(5)
 
-
+        
     def quit_app(self):
         self.driver.quit()
         
