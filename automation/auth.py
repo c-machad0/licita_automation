@@ -3,12 +3,12 @@ import time
 from selenium.webdriver.common.by import By
 
 from automation.base_manager import BaseAutomation
-from config import URLS, LOGIN
+from config import URL, LOGIN
 
 class AutenticationManager(BaseAutomation):
 
     def access_url(self):
-        self.driver.get(URLS[0])
+        self.driver.get(URL)
     
     # /Account/Login
     def login(self):

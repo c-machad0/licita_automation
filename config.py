@@ -1,10 +1,11 @@
 import os
 from dotenv import load_dotenv
-from pprint import pprint
 
+# --- Carrega variável de ambiente ---
 load_dotenv()
 
-URLS = ['https://www.itajuipe.ba.gov.br/Account/Login']
+
+# --- Dados do ambiente --- 
 
 LOGIN = {
     'user': os.getenv("login_user"),
@@ -13,6 +14,11 @@ LOGIN = {
 
 DEFAULT_DIRECTORY = os.getenv('default_directory')
 DOWNLOAD_DIRECTORY = os.getenv('download_directory')
+
+
+# --- Constantes da aplicação ---
+
+URL = 'https://www.itajuipe.ba.gov.br/Account/Login'
 
 MODALITIES = ['DISPENSA DE LICITAÇÃO', 'INEXIGIBILIDADE', 'PREGÃO ELETRÔNICO', 'PREGÃO PRESENCIAL', 'CREDENCIAMENTO']
 

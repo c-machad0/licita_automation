@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from automation.base_manager import BaseAutomation
 
 
-from utils import find_file_in_directory, fill_datetime_field, extract_all_items, normalize_select_option_item
+from utils import extract_all_items, normalize_select_option_item
 
 class ItensManager(BaseAutomation):
      def add_item(self):
