@@ -22,7 +22,7 @@ URL = 'https://www.itajuipe.ba.gov.br/Account/Login'
 
 MODALITIES = ['DISPENSA DE LICITAÇÃO', 'INEXIGIBILIDADE', 'PREGÃO ELETRÔNICO', 'PREGÃO PRESENCIAL', 'CREDENCIAMENTO']
 
-RELACIONAMENTOS = {
+MODALITY_RELATIONS = {
     'Modalidade': {
         '8 - Dispensa de Licitação': {
             'Instrumento': ['2 - Aviso de Contratação Direta'],
@@ -59,7 +59,7 @@ RELACIONAMENTOS = {
     }
 }
 
-FUNDAMENTO_LEGAL = {
+LEGAL_BASIS = {
     'Modalidade': {
         '8 - Dispensa de Licitação': {
             'art_75_i': '18 - Lei 14.133/2021, Art. 75, I',
