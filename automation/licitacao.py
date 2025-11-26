@@ -9,9 +9,11 @@ from reader.data_extractor import DataExtractor
 
 class LicitaManager(BaseAutomation):
 
-    def __init__(self, driver, info_bid):
+    def __init__(self, driver, info_bid, data_extractor, pdf_processor):
         self.driver = driver
         self.info_bid = info_bid
+        self.data_extractor = data_extractor
+        self.pdf_processor = pdf_processor
 
 
     def consult_licita(self):
@@ -30,13 +32,12 @@ class LicitaManager(BaseAutomation):
 
     # /sai/ConfiguracaoPncp/InserirCompra
     def inserir_licitacao(self):
-        data_extract = DataExtractor()
 
         try:
             # modalidade
             select_modalidade = self.driver.find_element(By.ID, 'compra_ModalidadeId')
             modalidade_select = Select(select_modalidade)
-            modalidade_select.select_by_visible_text(data_extract.get_modality())
+            modalidade_select.select_by_visible_text(self.data_extractor.get_modality())
 
             print('Opção de modalidade selecionada')
 
@@ -45,7 +46,7 @@ class LicitaManager(BaseAutomation):
             # instrumento
             select_instrumento = self.driver.find_element(By.ID, 'compra_TipoInstrumentoConvocatorioId')
             instrumento_select = Select(select_instrumento)
-            instrumento_select.select_by_visible_text(data_extract.get_instrumento())
+            instrumento_select.select_by_visible_text(self.data_extractor.get_instrumento())
 
             print('Opção de instrumento selecionada')
 
@@ -53,7 +54,7 @@ class LicitaManager(BaseAutomation):
 
             select_amparo_legal = self.driver.find_element(By. ID, 'compra_AmparoLegalId')
             amparo_legal_select = Select(select_amparo_legal)
-            amparo_legal_select.select_by_visible_text(data_extract.get_amparo_legal())
+            amparo_legal_select.select_by_visible_text(self.data_extractor.get_amparo_legal())
             
             print('Opção de amparo legal selecionada')
 
@@ -62,7 +63,7 @@ class LicitaManager(BaseAutomation):
             # modo de disputa
             select_modo = self.driver.find_element(By.ID, 'compra_ModoDisputaId')
             modo_select = Select(select_modo)
-            modo_select.select_by_visible_text(data_extract.get_modo_disputa())
+            modo_select.select_by_visible_text(self.data_extractor.get_modo_disputa())
 
             print('Opção de modo selecionada')
 
@@ -93,9 +94,9 @@ class LicitaManager(BaseAutomation):
             print('Local de certame escrito')
 
             # Inicializando as variáveis que capturam datas
-            start_date_field, _ = data_extract.read_notice()
-            _, end_date_field = data_extract.read_notice()
-            contract_date = data_extract.read_extract_to_time()
+            start_date_field, _ = self.pdf_processor.read_notice()
+            _, end_date_field = self.pdf_processor.read_notice()
+            contract_date = self.pdf_processor.read_extract_to_time()
 
             # Chamando função auxiliar para adicionar datas
             fill_datetime_field(self.driver, 'compra_DataAberturaProposta', start_date_field)
@@ -113,7 +114,7 @@ class LicitaManager(BaseAutomation):
             # selecionar tipo do documento
             select_type_doc = self.driver.find_element(By. ID, 'compra_TipoDocumentoId')
             type_doc = Select(select_type_doc)
-            type_doc.select_by_visible_text(data_extract.get_type_document())
+            type_doc.select_by_visible_text(self.data_extractor.get_type_document())
 
             print('Opção tipo de documento selecionada')
 
@@ -124,7 +125,7 @@ class LicitaManager(BaseAutomation):
             # selecionar código da unidade compradora
             select_code_unity_buy = self.driver.find_element(By. ID, 'compra_CodigoUnidadeCompradora')
             code_unity_buy = Select(select_code_unity_buy)
-            code_unity_buy.select_by_visible_text(data_extract.get_code_unity_buy())
+            code_unity_buy.select_by_visible_text(self.data_extractor.get_code_unity_buy())
 
             print('Opção unidade compradora selecionada')
 

@@ -7,6 +7,7 @@ from reader.base_reader import BaseReader
 from reader.excel_processor import ExcelProcessor
 from reader.field_mapper import FieldMapper
 from reader.pdf_processor import PDFProcessor
+from reader.data_extractor import DataExtractor
 
 
 class MainAutomation():
@@ -19,6 +20,7 @@ class MainAutomation():
         self.pdf_processor = PDFProcessor(self.base_reader)
         self.field_mapper = FieldMapper(self.base_reader)
         self.excel_processor = ExcelProcessor()
+        self.data_extractor = DataExtractor(self.base_reader)
         
         # 3. Criar módulo de automação básico (auth, navigation), porque precisa do driver para os próximos
         self.auth = AutenticationManager()
@@ -28,7 +30,7 @@ class MainAutomation():
         self._process_data()
         
         # 5. Criar módulos que usam infobid, passando como parâmetro
-        self.licita = LicitaManager(self.auth.driver, self.info_bid)
+        self.licita = LicitaManager(self.auth.driver, self.info_bid, self.data_extractor, self.pdf_processor)
         self.itens = ItensManager(self.auth.driver)
         self.upload = UploadManager(self.auth.driver)
     
@@ -56,15 +58,21 @@ class MainAutomation():
         self.navigation.home()
         self.navigation.publicacao_legal()
         self.navigation.indexedicao()
-        """self.navigation.nova_licitacao()
-        self.licita.inserir_licitacao()
-        self.itens.add_item()"""
+        self.licita.consult_licita()
+
+        if self.licita.consult_licita():
+            print('Licitação já existe')
+            self.auth.quit_app()
+        else:
+            self.navigation.nova_licitacao()
+            self.licita.inserir_licitacao()
+            self.itens.add_item()
         
         # Processar licitação
-        self.licita.consult_licita()
+        #self.licita.consult_licita()
         
         # Upload
-        self.upload.upload_arquivos_licitacao()
+        #self.upload.upload_arquivos_licitacao()
         
         # Finalizar
         self.auth.quit_app()
