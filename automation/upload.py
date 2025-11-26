@@ -9,6 +9,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from automation.base_manager import BaseAutomation
 
 class UploadManager(BaseAutomation):
+
+    def __init__(self, driver):
+          self.driver = driver
+
+          
     # LicitacaoContrato/FasesLicitacao/
     def upload_arquivos_licitacao(self):
 

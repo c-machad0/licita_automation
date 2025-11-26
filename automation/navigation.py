@@ -7,6 +7,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from automation.base_manager import BaseAutomation
 
 class NavigationManager(BaseAutomation):
+
+    def __init__(self, driver):
+        self.driver = driver
+
+
      # /home
     def home(self):
         try:

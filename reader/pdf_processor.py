@@ -8,6 +8,17 @@ from utils import find_file_in_directory, convert_datetime_to_iso, normalize_tex
 
 class PDFProcessor(BaseReader):
 
+    def __init__(self, base_reader: BaseReader):
+        """
+        Recebe base_reader como parâmetro para compartilhar estado.
+        """
+
+        self.base_reader = base_reader
+        self.directory = base_reader.directory
+        self.modalities = base_reader.modalities
+        self.legal_basis = base_reader.legal_basis
+
+
     def read_pdf_lines(self, file_keyword):
         filepath = find_file_in_directory(self.directory, file_keyword)
         if not filepath:
@@ -25,28 +36,25 @@ class PDFProcessor(BaseReader):
         numero do processo administrativo e objeto]
         """
 
-        lines = self.read_pdf_lines('Contrato'.upper())
+        """
+        Extrai dados do PDF e ATUALIZA base_reader.
+        """
 
-        self.read_modality = None
-        self.read_num_modality = None
-        self.read_admprocess = None
-        self.read_object = None
-        self.type_doc = None
-        self.code_unity_buy = None
+        lines = self.read_pdf_lines('Contrato'.upper())
 
         # Encontrado a modalidade e seu numero através do texto lido
         for index, line in enumerate(lines):
             for modalidade in self.modalities:
                 if modalidade in line:
-                    self.read_modality = modalidade # Armazenando a modalidade em read_modality
-                    self.read_num_modality = lines[index][-9:] # Armazenando o numero da modalidade em read_num_modality
+                    self.base_reader.read_modality = modalidade # Armazenando a modalidade em read_modality
+                    self.base_reader.read_num_modality = lines[index][-9:] # Armazenando o numero da modalidade em read_num_modality
                     break
         
         # Encontrar numero do processo adminstrativo
         for line in lines:
             if 'Processo Administrativo'.upper() in line:
                 # PROCESSO ADMMINISTRATIVO N° 
-                self.read_admprocess = line[-9:]
+                self.base_reader.read_admprocess = line[-9:]
                 break
         
         result_lines = []
@@ -62,7 +70,7 @@ class PDFProcessor(BaseReader):
                     break
                 result_lines.append(line)
         
-        self.read_object = ''.join(result_lines)
+        self.base_reader.read_object = ''.join(result_lines)
 
 
     def read_extract_to_time(self):
@@ -72,6 +80,10 @@ class PDFProcessor(BaseReader):
     
 
     def read_extract_to_law(self):
+        """
+        Extrai fundamentação legal (depende de select_field).
+        """
+
         lines = self.read_pdf_lines('Extrato')
 
         fund_legal_capturada = None
@@ -85,15 +97,15 @@ class PDFProcessor(BaseReader):
         clean_text = remove_stopwords(text_normalized)
 
         modalidade_final = None
-        for key_mod in self.legal_basis['Modalidade']:
-            if unidecode(self.modality_found_final.lower()) in unidecode(key_mod.lower()):
+        for key_mod in self.base_reader.legal_basis['Modalidade']:
+            if unidecode(self.base_reader.modality_found_final.lower()) in unidecode(key_mod.lower()):
                 modalidade_final = key_mod
                 break
 
         if modalidade_final:
             artigos_dict = self.legal_basis['Modalidade'][modalidade_final]
             if clean_text in artigos_dict:
-                self.amparo_legal = artigos_dict[clean_text]
+                self.base_reader.amparo_legal = artigos_dict[clean_text]
             else:
                 return None
         else:

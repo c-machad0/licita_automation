@@ -11,7 +11,12 @@ from automation.base_manager import BaseAutomation
 from utils import extract_all_items, normalize_select_option_item
 
 class ItensManager(BaseAutomation):
-     def add_item(self):
+
+    def __init__(self, driver):
+       self.driver = driver
+
+
+    def add_item(self):
         lista_itens = extract_all_items()
 
         for item in lista_itens:

@@ -9,6 +9,11 @@ from reader.data_extractor import DataExtractor
 
 class LicitaManager(BaseAutomation):
 
+    def __init__(self, driver, info_bid):
+        self.driver = driver
+        self.info_bid = info_bid
+
+
     def consult_licita(self):
         field_numero_licita = self.driver.find_element(By.ID, 'search_NumeroLicitacao')
         field_numero_licita.send_keys(self.info_bid['Número da Compra'])
