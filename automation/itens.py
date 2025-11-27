@@ -10,7 +10,7 @@ from automation.base_manager import BaseAutomation
 
 from utils import extract_all_items, normalize_select_option_item
 
-class ItensManager(BaseAutomation):
+class ItensManager():
 
     def __init__(self, driver):
        self.driver = driver
@@ -19,13 +19,17 @@ class ItensManager(BaseAutomation):
     def add_item(self):
         lista_itens = extract_all_items()
 
+        if not lista_itens:
+            print('Nenhum item encontrado.')
+            return
+        
         for item in lista_itens:
             botao_add_itens = self.driver.find_element(By. ID, 'add-item-compra')
             botao_add_itens.click()
 
             # Espera a aba de adicionar itens estar visível para começar o preenchimento dos campos
             # Utilizando o campo de descrição como exemplo de seletor a estar visível
-            field_descricao = WebDriverWait(self.driver, 7).until(
+            field_descricao = WebDriverWait(self.driver, 10).until(
                 EC.visibility_of_element_located((By.ID, 'Descricao'))
             )
             field_descricao.send_keys(item['Descrição'])
@@ -72,7 +76,7 @@ class ItensManager(BaseAutomation):
             categoria_item_select = Select(select_categoria_item)
             normalize_select_option_item(categoria_item_select, texto_desejado_categoria)
 
-            botao_submit = WebDriverWait(self.driver, 5).until(
+            botao_submit = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.ID, 'btn-add-item-compra'))
             )
 
@@ -81,8 +85,12 @@ class ItensManager(BaseAutomation):
             botao_submit.click()
 
             # Espera até o elemento escolhido (Descrição) esteja invisível para repetir o ciclo
-            WebDriverWait(self.driver, 5).until(
+            WebDriverWait(self.driver, 10).until(
                 EC.invisibility_of_element_located((By.ID, 'Descricao'))
+            )
+
+            WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.ID, 'add-item-compra'))
             )
 
             time.sleep(5)

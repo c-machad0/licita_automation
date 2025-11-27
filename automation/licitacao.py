@@ -7,13 +7,14 @@ from automation.base_manager import BaseAutomation
 from utils import find_file_in_directory, fill_datetime_field
 from reader.data_extractor import DataExtractor
 
-class LicitaManager(BaseAutomation):
+class LicitaManager():
 
-    def __init__(self, driver, info_bid, data_extractor, pdf_processor):
+    def __init__(self, driver, info_bid, data_extractor, pdf_processor, default_dir):
         self.driver = driver
         self.info_bid = info_bid
         self.data_extractor = data_extractor
         self.pdf_processor = pdf_processor
+        self.default_dir = default_dir
 
 
     def consult_licita(self):
@@ -134,9 +135,6 @@ class LicitaManager(BaseAutomation):
             field_object.send_keys(self.info_bid['Objeto'])
 
             print('Local do Objeto escrito')
-
-            # chamando a função de adicionar itens
-            self.add_item()
 
             #field_cadastrar = self.driver.find_element(By. ID, 'Salvar')
             #field_cadastrar.click()

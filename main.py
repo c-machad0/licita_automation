@@ -30,7 +30,14 @@ class MainAutomation():
         self._process_data()
         
         # 5. Criar módulos que usam infobid, passando como parâmetro
-        self.licita = LicitaManager(self.auth.driver, self.info_bid, self.data_extractor, self.pdf_processor)
+        self.licita = LicitaManager(
+            self.auth.driver, 
+            self.info_bid, 
+            self.data_extractor, 
+            self.pdf_processor, 
+            self.base_reader.directory
+            )
+        
         self.itens = ItensManager(self.auth.driver)
         self.upload = UploadManager(self.auth.driver)
     
@@ -58,7 +65,6 @@ class MainAutomation():
         self.navigation.home()
         self.navigation.publicacao_legal()
         self.navigation.indexedicao()
-        self.licita.consult_licita()
 
         if self.licita.consult_licita():
             print('Licitação já existe')
